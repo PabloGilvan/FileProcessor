@@ -1,0 +1,10 @@
+origin:
+  file:
+    import: /mnt/00D4D3AFD4D3A566/Projetos/Desafios/Files
+
+spring:
+  cache:
+    type: redis
+  redis:
+    host: localhost
+    port: 6379
