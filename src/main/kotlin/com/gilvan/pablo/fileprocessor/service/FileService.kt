@@ -41,7 +41,8 @@ class FileService(
     private fun closeProcess(file: File) {
         val writer = Files.newBufferedWriter(Paths.get(fileManager.createProcessedFileFromOrigin(file.absolutePath)))
         writer.use {
-            dataProcessorService.summary().forEach{ writer.write(it) }
+            dataProcessorService.summary().forEach{ writer.appendln(it) }
+            writer.flush()
         }
         dataProcessorService.clear()
     }

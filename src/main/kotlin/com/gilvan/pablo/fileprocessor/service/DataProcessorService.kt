@@ -64,7 +64,9 @@ class DataProcessorService(
     fun summary(): List<String> {
         return listOf(
                 "Quantidade de clientes.: ${this.persistenceService.countClients()}",
-                "Quantidade de vendedores.: ${this.persistenceService.countSellers()}"
+                "Quantidade de vendedores.: ${this.persistenceService.countSellers()}",
+                "Venda mais alta.: ${this.persistenceService.greaterSale()}",
+                "Vendedor com menor número de vendas.: ${this.persistenceService.sellerWithSmallSales()}"
         )
     }
 
