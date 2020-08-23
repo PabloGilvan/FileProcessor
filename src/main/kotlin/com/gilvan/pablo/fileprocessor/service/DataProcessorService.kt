@@ -1,5 +1,7 @@
 package com.gilvan.pablo.fileprocessor.service
 
+import com.gilvan.pablo.fileprocessor.utils.FileLineException
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -8,28 +10,37 @@ import java.math.BigInteger
 class DataProcessorService(
         val persistenceService: PersistenceService
 ) {
+
+    val logger = LoggerFactory.getLogger(javaClass)
+
     private val patternSeller = Regex("001;[0-9]*[;][a-zA-Z ]*[;][0-9]*\\.[0-9]*")
     private val patternClient = Regex("002;[0-9]*[;][a-zA-Z ]*[;][a-zA-Z ]*")
     private val patternSale = Regex("003;[0-9]*[;][0-9]*[;][0-9]*[;][0-9]*\\.[0-9]*[;][a-zA-Z ]*")
 
     fun processContent(register: String) {
-        when {
-            register.matches(patternSeller) -> {
-                this.processSellerData(register)
+        try {
+            when {
+                register.matches(patternSeller) -> {
+                    this.processSellerData(register)
+                }
+                register.matches(patternClient) -> {
+                    this.processClientData(register)
+                }
+                register.matches(patternSale) -> {
+                    this.processSaleData(register)
+                }
+                else -> {
+                    this.processLineError(register)
+                }
             }
-            register.matches(patternClient) -> {
-                this.processClientData(register)
-            }
-            register.matches(patternSale) -> {
-                this.processSaleData(register)
-            }
-            else -> {
-                this.processLineError(register)
-            }
+        }catch (error: FileLineException){
+            this.clear()
+            throw error
         }
     }
 
     private fun processLineError(data: String) {
+        throw FileLineException("Linha com valor inválido para o padrão esperado.: $data")
     }
 
     private fun processSaleData(data: String) {

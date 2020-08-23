@@ -19,14 +19,17 @@ class FileService(
     @Value("\${origin.file.import}")
     private val fileOriginPath: String? = null
 
+    @Value("\${origin.file.export}")
+    private val fileDestinationPath: String? = null
+
     val logger = LoggerFactory.getLogger(javaClass)
 
     fun processFiles() {
-        if(Objects.nonNull(fileOriginPath) ) {
+        if(Objects.nonNull(fileOriginPath) && Objects.nonNull(fileDestinationPath)) {
             fileManager.importDatFiles(fileOriginPath!!)
                        .forEach(this::loadFileContent)
         } else {
-            logger.warn("Diretórios de importação não definido.")
+            logger.warn("Diretórios de importação/exportação não definidos.")
         }
     }
 
@@ -39,7 +42,7 @@ class FileService(
     }
 
     private fun closeProcess(file: File) {
-        val writer = Files.newBufferedWriter(Paths.get(fileManager.createProcessedFileFromOrigin(file.absolutePath)))
+        val writer = Files.newBufferedWriter(Paths.get(fileManager.createProcessedFileFromOrigin(file.name, fileDestinationPath!!)))
         writer.use {
             dataProcessorService.summary().forEach{ writer.appendln(it) }
             writer.flush()

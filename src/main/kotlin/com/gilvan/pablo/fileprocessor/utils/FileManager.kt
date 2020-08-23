@@ -4,6 +4,7 @@ import java.io.File
 
 open class FileManager {
 
+
     fun importDatFiles(path: String): List<File> {
         val directory = loadDirectory(path)
         return this.filterDatFiles(directory)
@@ -13,7 +14,7 @@ open class FileManager {
         return directory.listFiles().filter { file -> file.name.endsWith(".dat") }
     }
 
-    private fun loadDirectory(path: String) : File {
+    fun loadDirectory(path: String) : File {
         val directory = File(path)
 
         if (!directory.exists()) {
@@ -22,13 +23,22 @@ open class FileManager {
         return directory
     }
 
-    fun createProcessedFileFromOrigin(path: String): String {
-        val file: File = File("${path}.proc")
+    fun createProcessedFileFromOrigin(name: String, fileDestinationPath: String): String {
+        val parent:File = this.loadOrCreateFolder(fileDestinationPath)
+        val file: File = File(parent, "${name}.proc")
         if(file.exists()){
             file.delete()
         }
-        file.createNewFile()
         return file.absolutePath
+    }
+
+    fun loadOrCreateFolder(path: String): File {
+        val folder : File = File(path)
+
+        if(!folder.exists()){
+            folder.mkdirs()
+        }
+        return folder;
     }
 
 }

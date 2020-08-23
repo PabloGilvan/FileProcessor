@@ -56,7 +56,8 @@ class PersistenceService(
     fun sellerWithSmallSales(): String {
         var sales = this.saleRepository.findAll()
                                        .groupBy { it?.seller }
-                                       .toList().sortedBy { it.second.sumBy { it1 -> it1!!.price.plus(BigDecimal(it1!!.quantity)).toInt() } }
+                                       .toList()
+                                       .sortedBy { it.second.sumBy { it1 -> (it1!!.price.plus(BigDecimal(it1!!.quantity)).toInt()) * -1 } }
         return sales[0].first!!
     }
 

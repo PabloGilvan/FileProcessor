@@ -1,6 +1,7 @@
 origin:
   file:
     import: /mnt/00D4D3AFD4D3A566/Projetos/Desafios/Files
+    export: /mnt/00D4D3AFD4D3A566/Projetos/Desafios/Files/out
 
 spring:
   cache:
