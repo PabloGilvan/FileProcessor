@@ -15,7 +15,7 @@ class DataProcessorService(
 
     private val patternSeller = Regex("001;[0-9]*[;][a-zA-Z ]*[;][0-9]*\\.[0-9]*")
     private val patternClient = Regex("002;[0-9]*[;][a-zA-Z ]*[;][a-zA-Z ]*")
-    private val patternSale = Regex("003;[0-9]*[;][0-9]*[;][0-9]*[;][0-9]*\\.[0-9]*[;][a-zA-Z ]*")
+    private val patternSale = Regex("003;[0-9]*[;][0-9]*[;][0-9]*[;][0-9]*\\.?[0-9]*[;][a-zA-Z ]*")
 
     fun processContent(register: String) {
         try {

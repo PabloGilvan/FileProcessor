@@ -36,28 +36,23 @@ class PersistenceService(
     }
 
     fun countClients(): Int = this.clientRepository.findAll().count()
+
     fun countSellers(): Int = this.sellerRepository.findAll().count()
+
     fun greaterSale(): Long {
-        var sales = this.saleRepository.findAll().toList()
+        val sales = this.saleRepository.findAll().toList()
         if(sales.isEmpty()){
             return 0;
         }
-        sales = sales.stream().sorted(Comparator { o1, o2 ->  this.saleComparator(o1!!, o2!!) }).collect(Collectors.toList())
-        return sales[0]?.id!!
+        return sales.stream().sorted(Comparator { o1, o2 ->  this.saleComparator(o1!!, o2!!) })
+                             .collect(Collectors.toList())[0]?.id!!
     }
 
-    fun saleComparator(sale1: Sale, sale2: Sale): Int {
-        val sale1Total = sale1.price.plus(BigDecimal(sale1.quantity));
-        val sale2Total = sale2.price.plus(BigDecimal(sale2.quantity));
-        return (sale1Total.compareTo(sale2Total))
-    }
-
-    //TODO Arrumar sort
     fun sellerWithSmallSales(): String {
-        var sales = this.saleRepository.findAll()
+        val sales = this.saleRepository.findAll()
                                        .groupBy { it?.seller }
                                        .toList()
-                                       .sortedBy { it.second.sumBy { it1 -> (it1!!.price.plus(BigDecimal(it1!!.quantity)).toInt()) * -1 } }
+                                       .sortedBy { it.second.sumBy { it1 -> (it1!!.price.plus(BigDecimal(it1!!.quantity)).toInt())} }
         return sales[0].first!!
     }
 
@@ -65,6 +60,12 @@ class PersistenceService(
         this.clientRepository.deleteAll()
         this.sellerRepository.deleteAll()
         this.saleRepository.deleteAll()
+    }
+
+    private fun saleComparator(sale1: Sale, sale2: Sale): Int {
+        val sale1Total = sale1.price.plus(BigDecimal(sale1.quantity));
+        val sale2Total = sale2.price.plus(BigDecimal(sale2.quantity));
+        return (sale2Total.compareTo(sale1Total))
     }
 
 }

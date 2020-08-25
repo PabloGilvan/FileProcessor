@@ -6,7 +6,6 @@ import com.gilvan.pablo.fileprocessor.data.SaleRepository
 import com.gilvan.pablo.fileprocessor.data.SellerRepository
 import com.gilvan.pablo.fileprocessor.utils.FileLineException
 import org.hamcrest.CoreMatchers
-import org.hamcrest.Matcher
 import org.hamcrest.MatcherAssert
 import org.junit.Before
 import org.junit.Test
@@ -74,5 +73,31 @@ class DataProcessorServiceIntegrationTest{
         MatcherAssert.assertThat("Nenhum cliente permaneceu no banco", clients.size, CoreMatchers.equalTo(0))
         MatcherAssert.assertThat("Nenhum vendedor permaneceu no banco", sellers.size, CoreMatchers.equalTo(0))
         MatcherAssert.assertThat("Nenhuma venda permaneceu no banco", sales.size, CoreMatchers.equalTo(0))
+    }
+
+    @Test fun `should return the expected summary`(){
+        dataProcessorService.processContent("001;1234567891234;Diego;5000.00")
+        dataProcessorService.processContent("002;1223326626626266;Eduardo Gonsalvez Pereira;Rural")
+        dataProcessorService.processContent("002;2345675434544345;Jose da Silva;Rural")
+        dataProcessorService.processContent("003;01;13410;1;1.1;Ted")
+        dataProcessorService.processContent("003;02;13410;2;1.1;Renato")
+        dataProcessorService.processContent("003;03;13410;2;1.1;Renato")
+        dataProcessorService.processContent("003;04;13410;1;1.1;Renato")
+        dataProcessorService.processContent("003;05;13410;1;1.1;Renato")
+        dataProcessorService.processContent("003;06;13410;7;2;Paulo")
+
+        val summaryExpected:List<String> = listOf(
+            "Quantidade de clientes.: 2",
+            "Quantidade de vendedores.: 1",
+            "Venda mais alta.: 6",
+            "Vendedor com menor número de vendas.: Ted"
+        )
+
+        val summary = dataProcessorService.summary();
+
+        MatcherAssert.assertThat("Sumário exibe a quantidade exata de clientes.", summary[0], CoreMatchers.equalTo(summaryExpected[0]));
+        MatcherAssert.assertThat("Sumário exibe a quantidade exata de vendedores.", summary[1], CoreMatchers.equalTo(summaryExpected[1]));
+        MatcherAssert.assertThat("Sumário exibe a venda mais alta corretamente.", summary[2], CoreMatchers.equalTo(summaryExpected[2]));
+        MatcherAssert.assertThat("Sumário exibe o pior vendedor.", summary[3], CoreMatchers.equalTo(summaryExpected[3]));
     }
 }
